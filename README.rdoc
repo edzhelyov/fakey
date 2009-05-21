@@ -24,8 +24,8 @@ Both plugins are lousy tested - +foreign_key_migrations+ have no tests at all, a
 
 ==What it (still) cannot do
 
-* Support other DBMS than PostgreSQL. Patches are welcome - see +postgresql_adapter+ +postgresql_test.rb+ for example on what has to be implemented.
+* Support other DBMS than PostgreSQL. Patches are welcome - see +postgresql_adapter+ and <tt>postgresql_test.rb</tt> for example on what has to be implemented.
 * <tt>change_table</tt> support (on the way).
-* reference a non-primary key.
+* reference to a non-primary key.
 
 Copyright (c) 2009 Sava Chankov, released under the MIT license. Thanks to Bryan Evans for database introspection queries.
