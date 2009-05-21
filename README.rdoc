@@ -1,0 +1,31 @@
+==Fakey - foreign keys for Rails, in a better way
+
+Before resorting to write yet another foreign key plugin I tried {foreign_key_migrations}[http://github.com/harukizaemon/foreign_key_migrations] and {foreigner}[http://github.com/matthuhiggins/foreigner], but they have annoying shortcomings. +foreign_key_migrations+ assumes every column ending on <tt>_id</tt> to be a foreign key and tries to infer the table name, which in my case was not the right one. +foreigner+ doesn't let you declare foreign key in <tt>create_table</tt> block, instead you have to call explicitly <tt>add_foreign_key(:comments, :posts)</tt> after it. Not quite helpful for tables containing a lot of foreign keys. 
+
+Both plugins are lousy tested - +foreign_key_migrations+ have no tests at all, and +foreigner+ tests SQL generation only, not the actual migration. 
+
+==Example
+
+  # Standard usage
+  create_table :books do |t|
+    t.belongs_to :author
+  end
+  
+  # Specify column name explicitly
+  create_table :poems do |t|
+    t.belongs_to :author, :column => :poet_id
+  end
+  
+  # Non-integer primary key (for those with legacy databases)
+  execute "CREATE TABLE whips(name VARCHAR(255) PRIMARY KEY)"
+  create_table :owners do |t|
+    t.belongs_to :whip, :column => :whip_name, :type => :string, :references => :name
+  end
+
+==What it (still) cannot do
+
+* Support other DBMS than PostgreSQL. Patches are welcome - see +postgresql_adapter+ +postgresql_test.rb+ for example on what has to be implemented.
+* <tt>change_table</tt> support (on the way).
+* reference a non-primary key.
+
+Copyright (c) 2009 Sava Chankov, released under the MIT license. Thanks to Bryan Evans for database introspection queries.
