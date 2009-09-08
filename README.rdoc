@@ -17,9 +17,9 @@ Both plugins are lousy tested - +foreign_key_migrations+ have no tests at all, a
   end
   
   # Non-integer primary key (for those with legacy databases)
-  execute "CREATE TABLE whips(name VARCHAR(255) PRIMARY KEY)"
+  execute "CREATE TABLE cavalier_whips(name VARCHAR(255) PRIMARY KEY)"
   create_table :owners do |t|
-    t.belongs_to :whip, :column => :whip_name, :type => :string, :references => :name
+    t.belongs_to :whip, :references => :cavalier_whips, :referenced_column => :name, :type => :string
   end
 
 ==What it (still) cannot do
