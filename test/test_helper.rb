@@ -13,7 +13,8 @@ ActiveRecord::Base.establish_connection(config[ENV['DB']] || config['postgresql'
 require File.join(plugin_test_dir, '/../init')
 
 class ActiveSupport::TestCase #:nodoc:
-  include ActiveRecord::TestFixtures
+  # allow testing in Rails < 2.3
+  include ActiveRecord::TestFixtures rescue NameError
   self.use_transactional_fixtures = true
   self.use_instantiated_fixtures  = false
   ActiveRecord::Migration.verbose = false

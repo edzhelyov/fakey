@@ -2,7 +2,6 @@ require 'connection_adapters/abstract/schema_definitions'
 
 module ActiveRecord
   module ConnectionAdapters    
-    # Table.class_eval{include Fkey::Table}
     TableDefinition.class_eval{include Fkey::TableDefinition}
   end
 end

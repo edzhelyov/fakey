@@ -40,7 +40,8 @@ module Fkey
         if polymorphic
           column("#{col}_type", :string, polymorphic.is_a?(Hash) ? polymorphic : options)
         else
-          add_foreign_key(column_name, col.to_s.pluralize, options)
+          table_name = options[:references] || col.to_s.pluralize
+          add_foreign_key(column_name, table_name, options)
         end
       end
     end

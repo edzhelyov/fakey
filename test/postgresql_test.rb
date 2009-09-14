@@ -1,13 +1,8 @@
 require "#{File.dirname(__FILE__)}/test_helper"
 
 class PostgreSQLTest < ActiveSupport::TestCase
-  def setup
-    @connection = ActiveRecord::Base.connection
-    ActiveRecord::Migration.verbose = false
-  end
-  
   def inspect_foreign_keys(table)
-    @connection.select_all <<-END_SQL
+    ActiveRecord::Base.connection.select_all <<-END_SQL
     SELECT t1.table_name,
            KCU.column_name, 
            KCU2.table_name as referenced_table_name, 
@@ -15,12 +10,9 @@ class PostgreSQLTest < ActiveSupport::TestCase
       FROM (SELECT constraint_name, table_catalog, table_schema, table_name, constraint_type 
               FROM information_schema.table_constraints 
              WHERE table_name='#{table}') AS t1 
-INNER JOIN information_schema.key_column_usage as KCU 
-        ON (t1.constraint_name=KCU.constraint_name) 
- LEFT JOIN information_schema.referential_constraints as REF2 
-        ON (REF2.constraint_name=t1.constraint_name) 
- LEFT JOIN information_schema.key_column_usage as KCU2 
-        ON (REF2.unique_constraint_name=KCU2.constraint_name)
+INNER JOIN information_schema.key_column_usage        AS KCU  ON (t1.constraint_name=KCU.constraint_name) 
+ LEFT JOIN information_schema.referential_constraints AS REF2 ON (REF2.constraint_name=t1.constraint_name) 
+ LEFT JOIN information_schema.key_column_usage        AS KCU2 ON (REF2.unique_constraint_name=KCU2.constraint_name)
      WHERE t1.constraint_type = 'FOREIGN KEY'
   ORDER BY table_name, 
            column_name
@@ -59,16 +51,16 @@ END_SQL
   
   class ExplicitColumnNameMigration < ActiveRecord::Migration
     def self.up
-      create_table(:authors) {}
+      create_table(:poets) {}
       create_table :poems do |t|
-        t.belongs_to :author, :column => :poet
+        t.belongs_to :author, :column => :author, :references => :poets
       end
     end
   end
   
   def test_create_foreign_key_with_explicit_column_name
     ExplicitColumnNameMigration.up
-    assert_equal( {'table_name' => 'poems', 'column_name' => 'poet', 'referenced_table_name' => 'authors', 'referenced_column_name' => 'id'},
+    assert_equal( {'table_name' => 'poems', 'column_name' => 'author', 'referenced_table_name' => 'poets', 'referenced_column_name' => 'id'},
                   inspect_foreign_keys(:poems).first)
   end
   
@@ -106,5 +98,23 @@ END_SQL
     assert_equal({'table_name' => 'books', 'column_name' => 'author_name', 'referenced_table_name' => 'authors', 'referenced_column_name' => 'name'},
                  inspect_foreign_keys(:books).first)
   
+  end
+  
+  class ReferenceToNonPrimaryKeyMigration < ActiveRecord::Migration
+    def self.up
+      create_table :authors do |t|
+        t.integer :ssid
+      end
+      execute("ALTER TABLE authors ADD UNIQUE(ssid)")
+      create_table :books do |t|
+        t.belongs_to :author_ssid, :column => :author_ssid, :references => :authors, :referenced_column => :ssid
+      end
+    end
+  end
+  
+  def test_reference_to_non_primary_key
+    ReferenceToNonPrimaryKeyMigration.up
+    assert_equal({'table_name' => 'books', 'column_name' => 'author_ssid', 'referenced_table_name' => 'authors', 'referenced_column_name' => 'ssid'},
+                 inspect_foreign_keys(:books).first)
   end
 end
