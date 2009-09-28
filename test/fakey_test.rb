@@ -131,6 +131,8 @@ END_SQL
       end
     end
     def self.down
+      drop_table :books if ActiveRecord::Base.connection.tables.include? "books"
+      drop_table :authors if ActiveRecord::Base.connection.tables.include? "authors"
     end
   end 
   
