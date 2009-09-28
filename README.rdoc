@@ -2,8 +2,8 @@
 
 Before resorting to write yet another foreign key plugin I tried {foreign_key_migrations}[http://github.com/harukizaemon/foreign_key_migrations] and {foreigner}[http://github.com/matthuhiggins/foreigner], but they have annoying shortcomings. +foreign_key_migrations+ assumes every column ending on <tt>_id</tt> to be a foreign key and tries to infer the table name, which in my case was not the right one. +foreigner+ doesn't let you declare foreign key in <tt>create_table</tt> block, instead you have to call explicitly <tt>add_foreign_key(:comments, :posts)</tt> after it. Not quite helpful for tables containing a lot of foreign keys. 
 
-Both plugins are lousy tested - +foreign_key_migrations+ have no tests at all, and +foreigner+ tests SQL generation only, not the actual migration. fakey is fully tested 
-by directly inspecting schema in the database.
+Both plugins are lousy tested - +foreign_key_migrations+ have no tests at all, and +foreigner+ tests SQL generation only, not the actual migration. Fakey is fully tested 
+by directly inspecting schema in the database. And it supports both MySQL and PostgreSQL.
 
 ==Example
 
@@ -25,7 +25,7 @@ by directly inspecting schema in the database.
   end
   # => CREATE TABLE "poems" ("id" serial primary key, "author" integer REFERENCES "poets")
   
-  # Non-integer primary key (for those with legacy databases)
+  # Non-integer primary key (for those with legacy databases) - this only works in PostreSQL now!
   execute "CREATE TABLE authors(name VARCHAR(255) PRIMARY KEY)"
   create_table :books do |t|
     t.belongs_to :author, :column => :author_name, :type => :string
@@ -48,9 +48,12 @@ Rails: 2.0+ (tested with 2.0.5, 2.1.2, 2.2.2 and 2.3.4)
 
 Ruby: tested with 1.8.6 and 1.9.1
 
+PostgreSQL 7.0+
+
+MySQL 5.0+
+
 ==What it (still) cannot do
 
-* Support other DBMS than PostgreSQL. Patches are welcome - see +postgresql_adapter+ and <tt>postgresql_test.rb</tt> for example on what has to be implemented.
 * <tt>change_table</tt> support.
 
 Copyright (c) 2009 Sava Chankov, released under the MIT license. Thanks to Bryan Evans for database introspection query (taken from drysql gem).
