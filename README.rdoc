@@ -17,20 +17,20 @@ by directly inspecting schema in the database. And it supports both MySQL and Po
   create_table :poems do |t|
     t.belongs_to :author, :references => :poets
   end
-  # => CREATE TABLE "poems" ("id" serial primary key, "author_id" integer REFERENCES "authors")
+  # => CREATE TABLE "poems" ("id" serial primary key, "author_id" integer REFERENCES "poets")
   
   # Column name specified explicitly (if you don't want _id suffix)
-  create_table :poems do |t|
-    t.belongs_to :author, :column => :author, :references => :poets
-  end
-  # => CREATE TABLE "poems" ("id" serial primary key, "author" integer REFERENCES "poets")
-  
-  # Non-integer primary key (for those with legacy databases) - this only works in PostreSQL now!
-  execute "CREATE TABLE authors(name VARCHAR(255) PRIMARY KEY)"
   create_table :books do |t|
-    t.belongs_to :author, :column => :author_name, :type => :string
+    t.belongs_to :author, :column => :author
   end
-  # => CREATE TABLE "books" ("id" serial primary key, "author" VARCHAR(255) REFERENCES "authors")
+  # => CREATE TABLE "books" ("id" serial primary key, "author" integer REFERENCES "books")
+  
+  # Non-integer primary key (for those with legacy databases) - this only works in PostgreSQL now!
+  execute "CREATE TABLE authors( name VARCHAR(255) PRIMARY KEY)"
+  create_table :books do |t|
+    t.belongs_to :author_name, :column => :author_name, :references => :authors, :type => :string
+  end
+  # => CREATE TABLE "books" ("id" serial primary key, "author_name" VARCHAR(255) REFERENCES "authors")
 
   # Non-primary key (for those with legacy databases)
   create_table :authors do |t|

@@ -127,8 +127,10 @@ END_SQL
     def self.up
       execute "CREATE TABLE authors( name VARCHAR(255) PRIMARY KEY)"
       create_table :books do |t|
-        t.belongs_to :author, :column => :author_name, :type => :string
+        t.belongs_to :author_name, :column => :author_name, :references => :authors, :type => :string
       end
+    end
+    def self.down
     end
   end 
   
