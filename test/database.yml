@@ -1,8 +1,8 @@
 postgresql:
   adapter: postgresql
-  database: fkey_plugin_test
+  database: fakey_plugin_test
   min_messages: warning
 mysql:
   adapter: mysql
-  database: fkey_plugin_test
+  database: fakey_plugin_test
   min_messages: warning
