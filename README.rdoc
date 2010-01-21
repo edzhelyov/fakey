@@ -43,7 +43,7 @@ by directly inspecting schema in the database. And it supports both MySQL and Po
   # => CREATE TABLE "books" ("id" serial primary key, "author_ssid" integer REFERENCES "authors"(ssid))
 
 
-  # Changing table too
+  # Adding columns to existing - note that you have to use change_table instead of add_column (this works only in PostgreSQL currently)
   change_table :atuhors do |t|
     t.belongs_to :author
   end
