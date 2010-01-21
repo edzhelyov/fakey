@@ -42,6 +42,12 @@ by directly inspecting schema in the database. And it supports both MySQL and Po
   end
   # => CREATE TABLE "books" ("id" serial primary key, "author_ssid" integer REFERENCES "authors"(ssid))
 
+
+  # Changing table too
+  change_table :atuhors do |t|
+    t.belongs_to :author
+  end
+  
 ==Compatibility
 
 Rails: 2.0+ (tested with 2.0.5, 2.1.2, 2.2.2 and 2.3.4)
@@ -51,9 +57,5 @@ Ruby: tested with 1.8.6 and 1.9.1
 PostgreSQL 7.0+
 
 MySQL 5.0+
-
-==What it (still) cannot do
-
-* <tt>change_table</tt> support.
 
 Copyright (c) 2009 Sava Chankov, released under the MIT license. Thanks to Bryan Evans for database introspection query (taken from drysql gem).

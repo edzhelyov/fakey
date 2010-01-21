@@ -35,7 +35,7 @@ END_SQL
   end
   
   def teardown
-    self.class.const_get(@method_name.match(/test_(.+)/)[1].camelize + "Migration").down
+    self.class.const_get(@method_name.match(/test_(.+)/)[1].camelize + "Migration").down if defined?(ActiveRecord::ConnectionAdapters::MysqlAdapter)
   end
 
   class BelongsToMigration < ActiveRecord::Migration
@@ -165,5 +165,26 @@ END_SQL
     ReferenceToNonPrimaryKeyMigration.up
     assert_equal({'table_name' => 'books', 'column_name' => 'author_ssid', 'referenced_table_name' => 'authors', 'referenced_column_name' => 'ssid'},
                  inspect_foreign_keys(:books).first)
+  end
+  
+  class ChangeTableMigration < ActiveRecord::Migration
+    def self.up
+      create_table(:authors) {}
+      create_table(:books) {}
+      change_table :books do |t|
+        t.belongs_to :author
+      end
+    end
+    
+    def self.down
+      drop_table :books
+      drop_table :authors
+    end
+  end
+
+  def test_change_table
+    ChangeTableMigration.up
+    assert_equal( {'table_name' => 'books', 'column_name' => 'author_id', 'referenced_table_name' => 'authors', 'referenced_column_name' => 'id'},
+                   inspect_foreign_keys(:books).first)
   end
 end

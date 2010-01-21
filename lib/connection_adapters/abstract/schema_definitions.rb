@@ -60,4 +60,30 @@ module Fkey
       sql
     end
   end
+  
+  module Table
+    def self.included(base)
+      base.class_eval do
+        alias_method_chain :references, :foreign_keys
+        alias_method_chain :belongs_to, :foreign_keys
+      end
+    end
+
+    def references_with_foreign_keys(*args)
+      options = args.extract_options!
+      polymorphic = options.delete(:polymorphic)
+      args.each do |col|
+        column_name =  options[:column] || "#{col}_id"
+        column_database_type = options[:type] || :integer
+        if polymorphic
+          @base.add_column(@table_name, column_name, column_database_type, options)
+          @base.add_column(@table_name, "#{col}_type", :string, polymorphic.is_a?(Hash) ? polymorphic : options) 
+        else
+          options[:references] ||= col.to_s.pluralize
+          @base.add_column_with_foreign_key(@table_name, column_name, column_database_type, options)
+        end
+      end
+    end
+    alias :belongs_to_with_foreign_keys :references_with_foreign_keys
+  end
 end

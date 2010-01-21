@@ -3,6 +3,7 @@ require 'connection_adapters/abstract/schema_definitions'
 module ActiveRecord
   module ConnectionAdapters    
     TableDefinition.class_eval{include Fkey::TableDefinition}
+    Table.class_eval{include Fkey::Table}
   end
 end
 
