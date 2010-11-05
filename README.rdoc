@@ -1,9 +1,6 @@
 ==Fakey - foreign keys for Rails, in a better way
 
-Before resorting to write yet another foreign key plugin I tried {foreign_key_migrations}[http://github.com/harukizaemon/foreign_key_migrations] and {foreigner}[http://github.com/matthuhiggins/foreigner], but they have annoying shortcomings. +foreign_key_migrations+ assumes every column ending on <tt>_id</tt> to be a foreign key and tries to infer the table name, which in my case was not the right one. +foreigner+ doesn't let you declare foreign key in <tt>create_table</tt> block, instead you have to call explicitly <tt>add_foreign_key(:comments, :posts)</tt> after it. Not quite helpful for tables containing a lot of foreign keys. 
-
-Both plugins are lousy tested - +foreign_key_migrations+ have no tests at all, and +foreigner+ tests SQL generation only, not the actual migration. Fakey is fully tested 
-by directly inspecting schema in the database. And it supports both MySQL and PostgreSQL.
+This is fork of the Sava Chankov's fakey plugin (https://github.com/sava/fakey) ported to Rails 3.
 
 ==Example
 
@@ -50,12 +47,10 @@ by directly inspecting schema in the database. And it supports both MySQL and Po
   
 ==Compatibility
 
-Rails: 2.0+ (tested with 2.0.5, 2.1.2, 2.2.2 and 2.3.4)
+Rails: 3.0.1
 
-Ruby: tested with 1.8.6 and 1.9.1
+Ruby: tested 1.9.2
 
 PostgreSQL 7.0+
-
-MySQL 5.0+
 
 Copyright (c) 2009 Sava Chankov, released under the MIT license. Thanks to Bryan Evans for database introspection query (taken from drysql gem).
